@@ -12,6 +12,13 @@ Certifique-se de ter o Node.js instalado.
 2. **Visual Studio Code**  
 Utilize o Visual Studio Code como seu ambiente de desenvolvimento
 
+3. **MongoDB**
+Crie uma conta https://cloud.mongodb.com/ e projeto para banco para armazenar os dados.
+
+4. **MongoDB**
+No arquivo app.js o método connetc recebe a string de conexão do banco Mongo, assim que efetuar o passo 3, é necessário pegar sua string de conexão para colocar no método.
+Também é necessário a criação de um arquivo .env de nome apitimes.env, para passar sua senha, o arquivo deve conter SENHA_MONGODB = 'Aqui sua senha'
+
 API RESTful em Node.js para um sistema de cadastro de Times. A API deve incluir as seguintes funcionalidades:
 
 1. **Cadastro de times**: Permita que os usuários cadastrem times informando tecnico, nome, estadio, pais, local, ano fundacao e torcida. Todos os campos são obrigatórios.

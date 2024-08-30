@@ -1,12 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
+require('dotenv').config({ path: './apitimes.env' })
 
 // Criando a aplicação Express
 const app = express();
 
 // Conectando ao MongoDB
-mongoose.connect('mongodb+srv://adb:thiago147@timesapi.xbxat.mongodb.net/?retryWrites=true&w=majority&appName=TimesAPI')
+mongoose.connect(`mongodb+srv://adb:${process.env.SENHA_MONGODB}@timesapi.xbxat.mongodb.net/?retryWrites=true&w=majority&appName=TimesAPI`)
     .then(() => {
         console.log('Conectado ao MongoDB');
     }).catch((err) => {
