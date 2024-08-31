@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
-require('dotenv').config({ path: './apitimes.env' })
+require('dotenv').config()
 
 // Criando a aplicação Express
 const app = express();
