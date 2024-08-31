@@ -45,6 +45,36 @@ router.get('/times/:id', async (req, res) => {
     }
 });
 
+// Altrera os dados de um time
+router.put('/times/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
+
+        // Verificação se todos os campos foram preenchidos
+        if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
+            return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+        }
+
+        // Atualizar o time existente no banco de dados
+        const time = await Time.findByIdAndUpdate(
+            id,
+            { tecnico, nome, estadio, pais, local, anoFundacao, torcida },
+            { new: true } // Retornar o time atualizado
+        );
+
+        // Verificar se o time foi encontrado e atualizado
+        if (!time) {
+            return res.status(404).json({ error: 'Time não encontrado' });
+        }
+
+        res.status(200).json(time);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar time' });
+    }
+});
+
+
 // Remoção de time
 router.delete('/times/:id', async (req, res) => {
     try {
