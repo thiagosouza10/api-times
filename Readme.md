@@ -33,6 +33,9 @@ Para verificar todas as rotas consultar o arquivo no caminho `src/routes`
 #### **Requisitos técnicos:**
 - Crie uma conta https://cloud.mongodb.com/ e projeto para banco para armazenar os dados.
 
+### **Documentação Swagger:**
+- http://localhost:5000/api-times/
+
 
 ## **Subindo a API 🚀**
 1. Clonar o repositório e instalar as dependências:
