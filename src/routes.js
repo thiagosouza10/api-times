@@ -20,24 +20,38 @@ const router = express.Router();
  *         tecnico:
  *           type: string
  *           description: Nome do técnico do time
+ *           minLength: 3
+ *           maxLength: 30
  *         nome:
  *           type: string
  *           description: Nome do time
+ *           minLength: 3
+ *           maxLength: 30
  *         estadio:
  *           type: string
  *           description: Nome do estádio do time
+ *           minLength: 3
+ *           maxLength: 30
  *         pais:
  *           type: string
  *           description: País do time
+ *           minLength: 3
+ *           maxLength: 30
  *         local:
  *           type: string
  *           description: Localização do time
+ *           minLength: 3
+ *           maxLength: 30
  *         anoFundacao:
- *           type: integer
- *           description: Ano de fundação do time
+ *           type: string
+ *           description: Ano de fundação do time (4 dígitos)
+ *           minLength: 4
+ *           maxLength: 4
  *         torcida:
  *           type: string
  *           description: Nome da torcida do time
+ *           minLength: 3
+ *           maxLength: 30
  */
 
 /**
@@ -59,20 +73,29 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Time'
  *       400:
- *         description: Campos obrigatórios ausentes
+ *         description: Campos obrigatórios ausentes ou inválidos. Certifique-se de que todos os campos atendem aos requisitos de validação.
  *       500:
  *         description: Erro ao cadastrar time
  */
 router.post('/times', async (req, res) => {
     try {
         const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
+
+        // Verifica se todos os campos obrigatórios estão presentes
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
         }
+
+        // Cria um novo documento com o Mongoose
         const time = new Time({ tecnico, nome, estadio, pais, local, anoFundacao, torcida });
         await time.save();
+
         res.status(201).json(time);
     } catch (error) {
+        // Verifica se o erro é de validação
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
         res.status(500).json({ error: 'Erro ao cadastrar time' });
     }
 });
@@ -165,7 +188,7 @@ router.get('/times/:id', async (req, res) => {
  *       200:
  *         description: Time atualizado com sucesso
  *       400:
- *         description: Campos obrigatórios ausentes
+ *         description: Campos obrigatórios ausentes ou inválidos. Certifique-se de que todos os campos atendem aos requisitos de validação.
  *       404:
  *         description: Time não encontrado
  *       500:
@@ -176,23 +199,27 @@ router.put('/times/:id', async (req, res) => {
         const { id } = req.params;
         const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
 
+        // Verifica se todos os campos obrigatórios estão presentes
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
-        }
-
-        const timeExists = await Time.findById(id);
-        if (!timeExists) {
-            return res.status(404).json({ error: 'Time não encontrado' });
         }
 
         const updatedTime = await Time.findByIdAndUpdate(
             id,
             { tecnico, nome, estadio, pais, local, anoFundacao, torcida },
-            { new: true }
+            { new: true, runValidators: true } // `runValidators: true` garante que o Mongoose valide os dados.
         );
+
+        if (!updatedTime) {
+            return res.status(404).json({ error: 'Time não encontrado' });
+        }
 
         res.status(200).json(updatedTime);
     } catch (error) {
+        // Verifica se o erro é de validação
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
         res.status(500).json({ error: 'Erro ao atualizar time' });
     }
 });
