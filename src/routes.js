@@ -83,7 +83,17 @@ router.post('/times', async (req, res) => {
 
         // Verifica se todos os campos obrigatórios estão presentes
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
-            return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+            return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
+        }
+
+        // Normaliza o nome do time para caixa baixa para a comparação
+        const nomeNormalizado = nome.toLowerCase();
+
+        // Verifica se já existe um time com o mesmo nome
+        const timeExistente = await Time.findOne({ nome: new RegExp(`^${nomeNormalizado}$`, 'i') });
+
+        if (timeExistente) {
+            return res.status(400).json({ erro: 'Já existe um time com o mesmo nome' });
         }
 
         // Cria um novo documento com o Mongoose
@@ -91,12 +101,12 @@ router.post('/times', async (req, res) => {
         await time.save();
 
         res.status(201).json(time);
-    } catch (error) {
+    } catch (erro) {
         // Verifica se o erro é de validação
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({ error: error.message });
+        if (erro.name === 'ValidationError') {
+            return res.status(400).json({ erro: erro.message });
         }
-        res.status(500).json({ error: 'Erro ao cadastrar time' });
+        res.status(500).json({ erro: 'Erro ao cadastrar time' });
     }
 });
 
@@ -121,8 +131,8 @@ router.get('/times', async (req, res) => {
     try {
         const times = await Time.find();
         res.json(times);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao listar times' });
+    } catch (erro) {
+        res.status(500).json({ erro: 'Erro ao listar times' });
     }
 });
 
@@ -155,14 +165,57 @@ router.get('/times/:id', async (req, res) => {
         const time = await Time.findById(req.params.id);
         if (!time) {
             return res.status(404).json({
-                error: 'Time não encontrado',
+                erro: 'Time não encontrado',
                 id: req.params.id,
-                message: `O time com o ID ${req.params.id} não foi encontrado na base de dados.`
+                mensagem: `O time com o ID ${req.params.id} não foi encontrado na base de dados.`
             });
         }
         res.json(time);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar time' });
+    } catch (erro) {
+        res.status(500).json({ erro: 'Erro ao buscar time' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/times/nome/{nome}:
+ *   get:
+ *     summary: Consulta um time pelo nome
+ *     parameters:
+ *       - in: path
+ *         name: nome
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nome do time
+ *     responses:
+ *       200:
+ *         description: Time encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Time'
+ *       404:
+ *         description: Time não encontrado
+ *       500:
+ *         description: Erro ao buscar time
+ */
+router.get('/times/nome/:nome', async (req, res) => {
+    try {
+        const nomeNormalizado = req.params.nome.toLowerCase();
+        const time = await Time.findOne({ nome: new RegExp(`^${nomeNormalizado}$`, 'i') });
+
+        if (!time) {
+            return res.status(404).json({
+                erro: 'Time não encontrado',
+                nome: req.params.nome,
+                mensagem: `O time com o nome ${req.params.nome} não foi encontrado na base de dados.`
+            });
+        }
+
+        res.json(time);
+    } catch (erro) {
+        res.status(500).json({ erro: 'Erro ao buscar time' });
     }
 });
 
@@ -199,28 +252,26 @@ router.put('/times/:id', async (req, res) => {
         const { id } = req.params;
         const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
 
-        // Verifica se todos os campos obrigatórios estão presentes
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
-            return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+            return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
         }
 
-        const updatedTime = await Time.findByIdAndUpdate(
+        const timeAtualizado = await Time.findByIdAndUpdate(
             id,
             { tecnico, nome, estadio, pais, local, anoFundacao, torcida },
-            { new: true, runValidators: true } // `runValidators: true` garante que o Mongoose valide os dados.
+            { new: true, runValidators: true }
         );
 
-        if (!updatedTime) {
-            return res.status(404).json({ error: 'Time não encontrado' });
+        if (!timeAtualizado) {
+            return res.status(404).json({ erro: 'Time não encontrado' });
         }
 
-        res.status(200).json(updatedTime);
-    } catch (error) {
-        // Verifica se o erro é de validação
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({ error: error.message });
+        res.status(200).json(timeAtualizado);
+    } catch (erro) {
+        if (erro.name === 'ValidationError') {
+            return res.status(400).json({ erro: erro.message });
         }
-        res.status(500).json({ error: 'Erro ao atualizar time' });
+        res.status(500).json({ erro: 'Erro ao atualizar time' });
     }
 });
 
@@ -249,12 +300,12 @@ router.delete('/times/:id', async (req, res) => {
         const time = await Time.findByIdAndDelete(req.params.id);
 
         if (!time) {
-            return res.status(404).json({ error: 'Time não encontrado' });
+            return res.status(404).json({ erro: 'Time não encontrado' });
         }
 
-        res.json({ message: 'Time removido com sucesso' });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao deletar time' });
+        res.json({ mensagem: 'Time removido com sucesso' });
+    } catch (erro) {
+        res.status(500).json({ erro: 'Erro ao deletar time' });
     }
 });
 
