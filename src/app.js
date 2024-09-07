@@ -1,7 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
-require('dotenv').config()
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+require('dotenv').config();
 
 // Criando a aplicação Express
 const app = express();
@@ -14,6 +16,28 @@ mongoose.connect(`mongodb+srv://adb:${process.env.SENHA_MONGODB}@timesapi.xbxat.
         console.error('Erro ao conectar ao MongoDB:', err.message);
     });
 
+// Configuração do Swagger
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'TimesAPI',
+            version: '1.0.0',
+            description: 'Documentação da API TimesAPI'
+        },
+        servers: [
+            {
+                url: 'http://localhost:5000',
+                description: 'Servidor local'
+            }
+        ],
+    },
+    apis: ['./src/routes.js'], // Caminho correto para o arquivo de rotas
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-times', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Middleware para permitir JSON nas requisições
 app.use(express.json());
 
@@ -24,4 +48,5 @@ app.use('/api', routes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Documentação disponível em http://localhost:${PORT}/api-times`);
 });
