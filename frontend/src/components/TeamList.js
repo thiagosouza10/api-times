@@ -51,13 +51,23 @@ function TeamList() {
               primary={team.nome}
               secondary={`Técnico: ${team.tecnico}`}
             />
-            <Button
-              variant="outlined"
-              component={Link}
-              to={`/times/${team._id}`}
-            >
-              Detalhes
-            </Button>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                variant="outlined"
+                component={Link}
+                to={`/times/${team._id}`}
+              >
+                Detalhes
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                component={Link}
+                to={`/edit/${team._id}`}
+              >
+                Editar
+              </Button>
+            </Box>
           </ListItem>
         ))}
       </List>
