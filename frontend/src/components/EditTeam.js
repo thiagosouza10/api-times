@@ -1,8 +1,23 @@
-// src/components/EditTeam.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+// Estilo personalizado para borda do TextField
+const StyledTextField = styled(TextField)(({ theme, error }) => ({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: error ? '#f44336' : '#ccc', // Vermelho se houver erro, padrão se não
+    },
+    '&:hover fieldset': {
+      borderColor: error ? '#f44336' : '#aaa', // Vermelho se houver erro ao passar o mouse
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: error ? '#f44336' : '#4caf50', // Verde se preenchido e foco, vermelho se erro
+    },
+  },
+}));
 
 function EditTeam() {
   const [team, setTeam] = useState({
@@ -13,10 +28,11 @@ function EditTeam() {
     local: '',
     anoFundacao: '',
     torcida: '',
-    imagem: ''  // Adicione este campo para a URL da imagem
+    imagem: ''
   });
-  const [success, setSuccess] = useState(''); // Estado para mensagem de sucesso
+  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [touched, setTouched] = useState(false); // Para marcar se o formulário foi tocado
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -26,7 +42,7 @@ function EditTeam() {
         setTeam(response.data);
       })
       .catch(() => {
-        setError('Erro ao carregar os dados do time. Por favor, tente novamente.');
+        setError('Erro ao carregar os detalhes do time. Por favor, tente novamente.');
       });
   }, [id]);
 
@@ -35,19 +51,48 @@ function EditTeam() {
     setTeam(prevState => ({ ...prevState, [name]: value }));
   };
 
+  const handleBlur = () => {
+    setTouched(true); // Marca o formulário como tocado ao sair de um campo
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const hasError = Object.keys(team).some(field => !team[field] && ['tecnico', 'nome', 'estadio', 'pais', 'local', 'anoFundacao', 'torcida'].includes(field));
+    
+    if (hasError) {
+      setError('Todos os campos obrigatórios devem ser preenchidos.');
+      return;
+    }
+
     axios.put(`/api/times/${id}`, team)
       .then(() => {
-        setSuccess('Time atualizado com sucesso!'); // Mensagem de sucesso
+        setSuccess('Time atualizado com sucesso!');
         setError('');
-        setTimeout(() => navigate('/'), 2000); // Navega para a home após 2 segundos
+        setTimeout(() => navigate('/'), 2000);
       })
-      .catch(error => {
+      .catch(() => {
         setError('Erro ao atualizar time. Por favor, tente novamente.');
         setSuccess('');
       });
   };
+
+  const getErrorMessage = (field) => {
+    if (team[field] || !touched) return '';
+    return 'Este campo é obrigatório';
+  };
+
+  const getHelperText = (field) => {
+    const errorMessage = getErrorMessage(field);
+    return errorMessage;
+  };
+
+  const getError = (field) => {
+    return !team[field] && touched;
+  };
+
+  useEffect(() => {
+    setTouched(false); // Reseta o estado `touched` quando o componente é carregado
+  }, []);
 
   return (
     <Container>
@@ -56,59 +101,81 @@ function EditTeam() {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
+          <StyledTextField
             name="tecnico"
             value={team.tecnico}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Técnico"
             variant="outlined"
+            error={getError('tecnico')}
+            helperText={getHelperText('tecnico')}
           />
-          <TextField
+          <StyledTextField
             name="nome"
             value={team.nome}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Nome do Time"
             variant="outlined"
+            error={getError('nome')}
+            helperText={getHelperText('nome')}
           />
-          <TextField
+          <StyledTextField
             name="estadio"
             value={team.estadio}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Estádio"
             variant="outlined"
+            error={getError('estadio')}
+            helperText={getHelperText('estadio')}
           />
-          <TextField
+          <StyledTextField
             name="pais"
             value={team.pais}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="País"
             variant="outlined"
+            error={getError('pais')}
+            helperText={getHelperText('pais')}
           />
-          <TextField
+          <StyledTextField
             name="local"
             value={team.local}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Local"
             variant="outlined"
+            error={getError('local')}
+            helperText={getHelperText('local')}
           />
-          <TextField
+          <StyledTextField
             name="anoFundacao"
             value={team.anoFundacao}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Ano de Fundação"
             variant="outlined"
+            error={getError('anoFundacao')}
+            helperText={getHelperText('anoFundacao')}
           />
-          <TextField
+          <StyledTextField
             name="torcida"
             value={team.torcida}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Torcida"
             variant="outlined"
+            error={getError('torcida')}
+            helperText={getHelperText('torcida')}
           />
-          <TextField
+          <StyledTextField
             name="imagem"
             value={team.imagem}
             onChange={handleChange}
+            onBlur={handleBlur}
             label="Imagem URL"
             variant="outlined"
           />
@@ -126,8 +193,8 @@ function EditTeam() {
           >
             Voltar para Home
           </Button>
-          {success && <Alert severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
-          {error && <Alert severity="error">{error}</Alert>} {/* Mensagem de erro */}
+          {success && <Alert severity="success">{success}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
         </Box>
       </form>
     </Container>

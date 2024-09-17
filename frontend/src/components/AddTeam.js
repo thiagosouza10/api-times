@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+// Estilo personalizado para borda do TextField
+const StyledTextField = styled(TextField)(({ theme, error }) => ({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: error ? '#f44336' : '#ccc', // Vermelho se houver erro, padrão se não
+    },
+    '&:hover fieldset': {
+      borderColor: error ? '#f44336' : '#aaa', // Vermelho se houver erro ao passar o mouse
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: error ? '#f44336' : '#4caf50', // Verde se preenchido e foco, vermelho se erro
+    },
+  },
+}));
 
 function AddTeam() {
   const [team, setTeam] = useState({
@@ -17,15 +33,20 @@ function AddTeam() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [touched, setTouched] = useState(false); // Para marcar se o formulário foi tocado
+  const [initialLoad, setInitialLoad] = useState(true); // Para marcar se a tela foi carregada
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTouched(true); // Marca o formulário como tocado ao carregar a tela
+    setInitialLoad(false); // Atualiza a flag para indicar que a tela foi carregada
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTeam(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleBlur = (e) => {
-    const { name } = e.target;
+  const handleBlur = () => {
     setTouched(true); // Marca o formulário como tocado ao sair de um campo
   };
 
@@ -60,14 +81,10 @@ function AddTeam() {
     return errorMessage;
   };
 
-  const getColor = (field) => {
-    if (!touched) return 'error';
-    return team[field] ? 'success' : 'error';
+  const getError = (field) => {
+    // Campo obrigatório com erro se estiver vazio e a tela já foi carregada
+    return !team[field] && ['tecnico', 'nome', 'estadio', 'pais', 'local', 'anoFundacao', 'torcida'].includes(field) && !initialLoad;
   };
-
-  useEffect(() => {
-    setTouched(false); // Reseta o estado `touched` quando o componente é carregado
-  }, []);
 
   return (
     <Container>
@@ -76,84 +93,77 @@ function AddTeam() {
       </Typography>
       <form onSubmit={handleSubmit}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
+          <StyledTextField
             name="tecnico"
             value={team.tecnico}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Técnico"
             variant="outlined"
-            error={getColor('tecnico') === 'error'}
+            error={getError('tecnico')}
             helperText={getHelperText('tecnico')}
-            sx={{ backgroundColor: getColor('tecnico') === 'error' ? '#f8d7da' : (getColor('tecnico') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="nome"
             value={team.nome}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Nome do Time"
             variant="outlined"
-            error={getColor('nome') === 'error'}
+            error={getError('nome')}
             helperText={getHelperText('nome')}
-            sx={{ backgroundColor: getColor('nome') === 'error' ? '#f8d7da' : (getColor('nome') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="estadio"
             value={team.estadio}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Estádio"
             variant="outlined"
-            error={getColor('estadio') === 'error'}
+            error={getError('estadio')}
             helperText={getHelperText('estadio')}
-            sx={{ backgroundColor: getColor('estadio') === 'error' ? '#f8d7da' : (getColor('estadio') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="pais"
             value={team.pais}
             onChange={handleChange}
             onBlur={handleBlur}
             label="País"
             variant="outlined"
-            error={getColor('pais') === 'error'}
+            error={getError('pais')}
             helperText={getHelperText('pais')}
-            sx={{ backgroundColor: getColor('pais') === 'error' ? '#f8d7da' : (getColor('pais') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="local"
             value={team.local}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Local"
             variant="outlined"
-            error={getColor('local') === 'error'}
+            error={getError('local')}
             helperText={getHelperText('local')}
-            sx={{ backgroundColor: getColor('local') === 'error' ? '#f8d7da' : (getColor('local') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="anoFundacao"
             value={team.anoFundacao}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Ano de Fundação"
             variant="outlined"
-            error={getColor('anoFundacao') === 'error'}
+            error={getError('anoFundacao')}
             helperText={getHelperText('anoFundacao')}
-            sx={{ backgroundColor: getColor('anoFundacao') === 'error' ? '#f8d7da' : (getColor('anoFundacao') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="torcida"
             value={team.torcida}
             onChange={handleChange}
             onBlur={handleBlur}
             label="Torcida"
             variant="outlined"
-            error={getColor('torcida') === 'error'}
+            error={getError('torcida')}
             helperText={getHelperText('torcida')}
-            sx={{ backgroundColor: getColor('torcida') === 'error' ? '#f8d7da' : (getColor('torcida') === 'success' ? '#d4edda' : 'white') }}
           />
-          <TextField
+          <StyledTextField
             name="imagem"
             value={team.imagem}
             onChange={handleChange}
