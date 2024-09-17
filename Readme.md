@@ -50,6 +50,26 @@ npm install
 npm start
 ```
 
+## **Subindo o FrontEnd 🚀**
+1. Acessar a pasta frontend
+
+```
+cd frontend
+```
+
+2. Instalar as dependencias
+
+```
+npm install
+```
+
+3. Subir aplicação web
+
+```
+npm run start
+```
+
+
 ## **Testes com Supertest e Jest 🚀**
 - Os testes estão desenvolvidos baseados na massa de dados criada localmente e do meu banco de dados. 
 - Para executa-los, será necessário adaptar a massa de dados.
