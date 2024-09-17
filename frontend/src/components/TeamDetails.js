@@ -5,25 +5,33 @@ import { useParams } from 'react-router-dom';
 import { Container, Typography, Button, Box, CircularProgress, Alert } from '@mui/material';
 
 function TeamDetails() {
+  // Obtém o ID do time a partir dos parâmetros da URL
   const { id } = useParams();
+  // Estado para armazenar os dados do time
   const [team, setTeam] = useState(null);
+  // Estado para indicar o carregamento dos dados
   const [loading, setLoading] = useState(true);
+  // Estado para armazenar mensagens de erro
   const [error, setError] = useState(null);
 
+  // Efeito para buscar os detalhes do time quando o componente é montado
   useEffect(() => {
     axios.get(`/api/times/${id}`)
       .then(response => {
-        setTeam(response.data);
-        setLoading(false);
+        setTeam(response.data); // Atualiza o estado com os dados do time
+        setLoading(false); // Marca o carregamento como concluído
       })
       .catch(error => {
-        setError('Erro ao carregar os detalhes do time');
-        setLoading(false);
+        setError('Erro ao carregar os detalhes do time'); // Define mensagem de erro em caso de falha
+        setLoading(false); // Marca o carregamento como concluído mesmo em erro
       });
-  }, [id]);
+  }, [id]); // Recarrega quando o id muda
 
+  // Exibe um indicador de carregamento enquanto os dados estão sendo buscados
   if (loading) return <CircularProgress />;
+  // Exibe uma mensagem de erro se houver algum problema ao carregar os dados
   if (error) return <Alert severity="error">{error}</Alert>;
+  // Se não houver dados do time, não exibe nada
   if (!team) return null;
 
   return (
@@ -58,7 +66,7 @@ function TeamDetails() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => window.history.back()}
+          onClick={() => window.history.back()} // Volta para a página anterior
         >
           Voltar
         </Button>

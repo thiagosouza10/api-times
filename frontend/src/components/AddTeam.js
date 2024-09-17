@@ -4,22 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-// Estilo personalizado para borda do TextField
+// Estilo personalizado para o componente TextField
 const StyledTextField = styled(TextField)(({ theme, error }) => ({
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: error ? '#f44336' : '#ccc', // Vermelho se houver erro, padrão se não
+      borderColor: error ? '#f44336' : '#ccc', // Define a cor da borda com base no erro
     },
     '&:hover fieldset': {
-      borderColor: error ? '#f44336' : '#aaa', // Vermelho se houver erro ao passar o mouse
+      borderColor: error ? '#f44336' : '#aaa', // Altera a cor da borda ao passar o mouse
     },
     '&.Mui-focused fieldset': {
-      borderColor: error ? '#f44336' : '#4caf50', // Verde se preenchido e foco, vermelho se erro
+      borderColor: error ? '#f44336' : '#4caf50', // Verde quando o campo está focado e não há erro, vermelho se houver erro
     },
   },
 }));
 
 function AddTeam() {
+  // Estado para armazenar os dados do time
   const [team, setTeam] = useState({
     tecnico: '',
     nome: '',
@@ -30,28 +31,40 @@ function AddTeam() {
     torcida: '',
     imagem: ''
   });
+
+  // Estado para mensagens de sucesso e erro
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-  const [touched, setTouched] = useState(false); // Para marcar se o formulário foi tocado
-  const [initialLoad, setInitialLoad] = useState(true); // Para marcar se a tela foi carregada
+
+  // Estado para marcar se o formulário foi tocado e se a tela foi carregada
+  const [touched, setTouched] = useState(false); 
+  const [initialLoad, setInitialLoad] = useState(true);
+
+  // Hook para navegação entre páginas
   const navigate = useNavigate();
 
+  // Hook que marca o formulário como tocado e atualiza a flag de carregamento da tela
   useEffect(() => {
-    setTouched(true); // Marca o formulário como tocado ao carregar a tela
-    setInitialLoad(false); // Atualiza a flag para indicar que a tela foi carregada
+    setTouched(true); 
+    setInitialLoad(false);
   }, []);
 
+  // Função para lidar com mudanças nos campos de entrada
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTeam(prevState => ({ ...prevState, [name]: value }));
   };
 
+  // Função para marcar o formulário como tocado quando um campo perde o foco
   const handleBlur = () => {
-    setTouched(true); // Marca o formulário como tocado ao sair de um campo
+    setTouched(true); 
   };
 
+  // Função para lidar com o envio do formulário
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Verifica se algum dos campos obrigatórios está vazio
     const hasError = Object.keys(team).some(field => !team[field] && ['tecnico', 'nome', 'estadio', 'pais', 'local', 'anoFundacao', 'torcida'].includes(field));
     
     if (hasError) {
@@ -59,11 +72,12 @@ function AddTeam() {
       return;
     }
 
+    // Envia os dados do time para a API
     axios.post('/api/times', team)
       .then(() => {
         setSuccess('Time cadastrado com sucesso!');
         setError('');
-        setTimeout(() => navigate('/'), 2000);
+        setTimeout(() => navigate('/'), 2000); // Redireciona após 2 segundos
       })
       .catch(() => {
         setError('Erro ao cadastrar time. Por favor, tente novamente.');
@@ -71,18 +85,20 @@ function AddTeam() {
       });
   };
 
+  // Função para obter a mensagem de erro de um campo
   const getErrorMessage = (field) => {
     if (team[field] || !touched) return '';
     return 'Este campo é obrigatório';
   };
 
+  // Função para obter o texto auxiliar de um campo
   const getHelperText = (field) => {
     const errorMessage = getErrorMessage(field);
     return errorMessage;
   };
 
+  // Função para determinar se um campo tem erro
   const getError = (field) => {
-    // Campo obrigatório com erro se estiver vazio e a tela já foi carregada
     return !team[field] && ['tecnico', 'nome', 'estadio', 'pais', 'local', 'anoFundacao', 'torcida'].includes(field) && !initialLoad;
   };
 

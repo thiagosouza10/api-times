@@ -5,13 +5,15 @@ import { Link } from 'react-router-dom';
 import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert, TextField } from '@mui/material';
 
 function TeamList() {
+  // Estados para armazenar dados dos times, carregamento, erro, sucesso, e pesquisa
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null); // Estado para mensagem de sucesso
+  const [success, setSuccess] = useState(null); // Mensagem de sucesso
   const [searchName, setSearchName] = useState('');
   const [filteredTeams, setFilteredTeams] = useState([]);
 
+  // Efeito para buscar a lista de times ao carregar o componente
   useEffect(() => {
     axios.get('/api/times')
       .then(response => {
@@ -25,6 +27,7 @@ function TeamList() {
       });
   }, []);
 
+  // Função para buscar times pelo nome
   const handleSearch = () => {
     if (searchName.trim()) {
       axios.get(`/api/times/nome/${searchName.trim()}`)
@@ -45,6 +48,7 @@ function TeamList() {
     }
   };
 
+  // Função para excluir um time
   const handleDelete = (id) => {
     axios.delete(`/api/times/${id}`)
       .then(() => {
@@ -59,6 +63,7 @@ function TeamList() {
       });
   };
 
+  // Exibe um indicador de carregamento enquanto os dados estão sendo buscados
   if (loading) return <CircularProgress />;
   
   return (
