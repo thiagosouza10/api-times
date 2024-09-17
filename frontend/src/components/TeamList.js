@@ -2,16 +2,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Container, Typography, List, ListItem, ListItemText, Button, Box } from '@mui/material';
+import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert } from '@mui/material';
 
 function TeamList() {
   const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios.get('/api/times')
-      .then(response => setTeams(response.data))
-      .catch(error => console.error('Erro ao carregar os times:', error));
+      .then(response => {
+        setTeams(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError('Erro ao carregar os times. Por favor, tente novamente mais tarde.');
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Container>
@@ -31,6 +42,11 @@ function TeamList() {
       <List>
         {teams.map((team) => (
           <ListItem key={team._id} divider>
+            {team.imagem && (
+              <Box sx={{ mr: 2 }}>
+                <img src={team.imagem} alt={team.nome} style={{ width: 50, height: 50, objectFit: 'cover' }} />
+              </Box>
+            )}
             <ListItemText
               primary={team.nome}
               secondary={`Técnico: ${team.tecnico}`}

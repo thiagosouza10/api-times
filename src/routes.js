@@ -1,5 +1,5 @@
 const express = require('express');
-const Time = require('./models');
+const Time = require('./models'); // Certifique-se de que o caminho para o modelo está correto
 const router = express.Router();
 
 /**
@@ -47,11 +47,16 @@ const router = express.Router();
  *           description: Ano de fundação do time (4 dígitos)
  *           minLength: 4
  *           maxLength: 4
+ *           pattern: '^[0-9]{4}$'
  *         torcida:
  *           type: string
  *           description: Nome da torcida do time
  *           minLength: 3
  *           maxLength: 30
+ *         imagem:
+ *           type: string
+ *           description: URL da imagem do time
+ *           pattern: '^(http|https):\/\/[^ "]+$'
  */
 
 /**
@@ -79,11 +84,11 @@ const router = express.Router();
  */
 router.post('/times', async (req, res) => {
     try {
-        const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
+        const { tecnico, nome, estadio, pais, local, anoFundacao, torcida, imagem } = req.body;
 
-        // Verifica se todos os campos obrigatórios estão presentes
+        // Verifica se todos os campos obrigatórios estão presentes (imagem é opcional)
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
-            return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
+            return res.status(400).json({ erro: 'Todos os campos são obrigatórios, exceto a imagem' });
         }
 
         // Normaliza o nome do time para caixa baixa para a comparação
@@ -96,8 +101,8 @@ router.post('/times', async (req, res) => {
             return res.status(400).json({ erro: 'Já existe um time com o mesmo nome' });
         }
 
-        // Cria um novo documento com o Mongoose
-        const time = new Time({ tecnico, nome, estadio, pais, local, anoFundacao, torcida });
+        // Cria um novo documento com o Mongoose, incluindo a URL da imagem se fornecida
+        const time = new Time({ tecnico, nome, estadio, pais, local, anoFundacao, torcida, imagem });
         await time.save();
 
         res.status(201).json(time);
@@ -240,6 +245,10 @@ router.get('/times/nome/:nome', async (req, res) => {
  *     responses:
  *       200:
  *         description: Time atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Time'
  *       400:
  *         description: Campos obrigatórios ausentes ou inválidos. Certifique-se de que todos os campos atendem aos requisitos de validação.
  *       404:
@@ -250,15 +259,15 @@ router.get('/times/nome/:nome', async (req, res) => {
 router.put('/times/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { tecnico, nome, estadio, pais, local, anoFundacao, torcida } = req.body;
+        const { tecnico, nome, estadio, pais, local, anoFundacao, torcida, imagem } = req.body;
 
         if (!tecnico || !nome || !estadio || !pais || !local || !anoFundacao || !torcida) {
-            return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
+            return res.status(400).json({ erro: 'Todos os campos são obrigatórios, exceto a imagem' });
         }
 
         const timeAtualizado = await Time.findByIdAndUpdate(
             id,
-            { tecnico, nome, estadio, pais, local, anoFundacao, torcida },
+            { tecnico, nome, estadio, pais, local, anoFundacao, torcida, imagem },  // Incluindo imagem na atualização
             { new: true, runValidators: true }
         );
 

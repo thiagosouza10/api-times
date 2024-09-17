@@ -44,6 +44,10 @@ const TimeSchema = new mongoose.Schema({
         required: true,
         minlength: 3, 
         maxlength: 30 
+    },
+    imagem: { 
+        type: String, // Novo campo para a URL da imagem
+        required: false // O campo não é obrigatório
     }
 });
 
