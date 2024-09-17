@@ -79,8 +79,13 @@ function AddTeam() {
         setError('');
         setTimeout(() => navigate('/'), 2000); // Redireciona após 2 segundos
       })
-      .catch(() => {
-        setError('Erro ao cadastrar time. Time já existe ');
+      .catch((err) => {
+        // Verifica se o erro tem uma resposta do backend e exibe a mensagem específica
+        if (err.response && err.response.data && err.response.data.erro) {
+          setError(err.response.data.erro);
+        } else {
+          setError('Erro ao cadastrar time. Por favor, tente novamente mais tarde.');
+        }
         setSuccess('');
       });
   };
