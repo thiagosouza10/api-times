@@ -2,17 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert } from '@mui/material';
+import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert, TextField } from '@mui/material';
 
 function TeamList() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchName, setSearchName] = useState('');
+  const [filteredTeams, setFilteredTeams] = useState([]);
 
   useEffect(() => {
     axios.get('/api/times')
       .then(response => {
         setTeams(response.data);
+        setFilteredTeams(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -20,6 +23,22 @@ function TeamList() {
         setLoading(false);
       });
   }, []);
+
+  const handleSearch = () => {
+    if (searchName) {
+      axios.get(`/api/times/nome/${searchName}`)
+        .then(response => {
+          setFilteredTeams([response.data]);
+        })
+        .catch(() => {
+          setFilteredTeams([]);
+          setError('Time não encontrado');
+        });
+    } else {
+      setFilteredTeams(teams);
+      setError(null);
+    }
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
@@ -29,7 +48,7 @@ function TeamList() {
       <Typography variant="h4" component="h1" align="center" gutterBottom>
         Lista de Times
       </Typography>
-      <Box sx={{ mb: 2, textAlign: 'center' }}>
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
         <Button
           variant="contained"
           color="primary"
@@ -38,9 +57,26 @@ function TeamList() {
         >
           Adicionar Time
         </Button>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <TextField
+            label="Buscar por Nome"
+            variant="outlined"
+            size="small"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            sx={{ maxWidth: 300 }}
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSearch}
+          >
+            Buscar Time
+          </Button>
+        </Box>
       </Box>
       <List>
-        {teams.map((team) => (
+        {filteredTeams.map((team) => (
           <ListItem key={team._id} divider>
             {team.imagem && (
               <Box sx={{ mr: 2 }}>
