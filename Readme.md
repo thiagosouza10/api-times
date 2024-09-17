@@ -49,6 +49,8 @@ npm install
 ```
 npm start
 ```
+![Descrição da Imagem](frontend/public/images/api.png)
+
 
 ## **Subindo o FrontEnd 🚀**
 1. Acessar a pasta frontend
@@ -68,6 +70,7 @@ npm install
 ```
 npm run start
 ```
+![Descrição da Imagem](frontend/public/images/aplicacaoweb.png)
 
 
 ## **Testes com Supertest e Jest 🚀**
