@@ -40,6 +40,17 @@ function TeamList() {
     }
   };
 
+  const handleDelete = (id) => {
+    axios.delete(`/api/times/${id}`)
+      .then(() => {
+        setTeams(teams.filter(team => team._id !== id));
+        setFilteredTeams(filteredTeams.filter(team => team._id !== id));
+      })
+      .catch(() => {
+        setError('Erro ao deletar o time. Por favor, tente novamente mais tarde.');
+      });
+  };
+
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
 
@@ -102,6 +113,13 @@ function TeamList() {
                 to={`/edit/${team._id}`}
               >
                 Editar
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleDelete(team._id)}
+              >
+                Deletar
               </Button>
             </Box>
           </ListItem>
