@@ -1,0 +1,11 @@
+[
+  {
+    "id": "base",
+    "routes": ["add-headers:enabled", "get-times:success", "get-time:success"]
+  },
+  {
+    "id": "no-headers",
+    "from": "base",
+    "routes": ["add-headers:disabled"]
+  }
+]
