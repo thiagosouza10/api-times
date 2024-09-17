@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const routes = require('./routes');
+const routes = require('../../backend/src/routes');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
@@ -32,7 +32,7 @@ const swaggerOptions = {
             }
         ],
     },
-    apis: ['./src/routes.js'], // Caminho correto para o arquivo de rotas
+    apis: ['./backend/src/routes.js'], // Caminho correto para o arquivo de rotas
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

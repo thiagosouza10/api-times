@@ -16,7 +16,7 @@ Utilize o Visual Studio Code como seu ambiente de desenvolvimento
 Crie uma conta https://cloud.mongodb.com/ e projeto para banco para armazenar os dados.
 
 4. **MongoDB**
-No arquivo app.js o método connetc recebe a string de conexão do banco Mongo, assim que efetuar o passo 3, é necessário pegar sua string de conexão para inserir no método.
+No arquivo backend/src/app.js o método connetc recebe a string de conexão do banco Mongo, assim que efetuar o passo 3, é necessário pegar sua string de conexão para inserir no método.
 Também é necessário a criação de um arquivo `.env` na pasta raiz do projeto, o arquivo deve conter SENHA_MONGODB = 'Aqui sua senha' 
 
 API RESTful em Node.js para um sistema de cadastro de Times. A API deve incluir as seguintes funcionalidades:
@@ -28,7 +28,7 @@ API RESTful em Node.js para um sistema de cadastro de Times. A API deve incluir 
 5. **Atualização de time**: Endpoint PUT para atualizar um time.
 6. **Banco de Dados**: MongoDB como banco de dados.
 
-Para verificar todas as rotas consultar o arquivo no caminho `src/routes`
+Para verificar todas as rotas consultar o arquivo no caminho `backend/src/routes.js`
 
 #### **Requisitos técnicos:**
 - Crie uma conta https://cloud.mongodb.com/ e projeto para banco para armazenar os dados.

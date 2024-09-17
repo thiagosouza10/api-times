@@ -1,5 +1,5 @@
 const express = require('express');
-const Time = require('./models'); // Certifique-se de que o caminho para o modelo está correto
+const Time = require('../../backend/src/models'); // Certifique-se de que o caminho para o modelo está correto
 const router = express.Router();
 
 /**
