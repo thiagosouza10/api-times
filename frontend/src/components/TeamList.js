@@ -8,6 +8,7 @@ function TeamList() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null); // Estado para mensagem de sucesso
   const [searchName, setSearchName] = useState('');
   const [filteredTeams, setFilteredTeams] = useState([]);
 
@@ -18,25 +19,29 @@ function TeamList() {
         setFilteredTeams(response.data);
         setLoading(false);
       })
-      .catch(error => {
+      .catch(() => {
         setError('Erro ao carregar os times. Por favor, tente novamente mais tarde.');
         setLoading(false);
       });
   }, []);
 
   const handleSearch = () => {
-    if (searchName) {
-      axios.get(`/api/times/nome/${searchName}`)
+    if (searchName.trim()) {
+      axios.get(`/api/times/nome/${searchName.trim()}`)
         .then(response => {
           setFilteredTeams([response.data]);
+          setError(null);
+          setSuccess(null); // Limpa a mensagem de sucesso, se houver
         })
         .catch(() => {
           setFilteredTeams([]);
-          setError('Time não encontrado');
+          setError(`O time com o nome "${searchName}" não foi encontrado.`);
+          setSuccess(null); // Limpa a mensagem de sucesso, se houver
         });
     } else {
       setFilteredTeams(teams);
       setError(null);
+      setSuccess(null); // Limpa a mensagem de sucesso, se houver
     }
   };
 
@@ -45,15 +50,17 @@ function TeamList() {
       .then(() => {
         setTeams(teams.filter(team => team._id !== id));
         setFilteredTeams(filteredTeams.filter(team => team._id !== id));
+        setSuccess('Time excluído com sucesso!'); // Mensagem de sucesso
+        setError(null); // Limpa a mensagem de erro, se houver
       })
       .catch(() => {
         setError('Erro ao deletar o time. Por favor, tente novamente mais tarde.');
+        setSuccess(null); // Limpa a mensagem de sucesso, se houver
       });
   };
 
   if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">{error}</Alert>;
-
+  
   return (
     <Container>
       <Typography variant="h4" component="h1" align="center" gutterBottom>
@@ -86,6 +93,8 @@ function TeamList() {
           </Button>
         </Box>
       </Box>
+      {success && <Alert severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
+      {error && <Alert severity="error">{error}</Alert>} {/* Mensagem de erro */}
       <List>
         {filteredTeams.map((team) => (
           <ListItem key={team._id} divider>

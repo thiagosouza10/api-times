@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography } from '@mui/material';
+import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
 
 function AddTeam() {
   const [team, setTeam] = useState({
@@ -13,8 +13,9 @@ function AddTeam() {
     local: '',
     anoFundacao: '',
     torcida: '',
-    imagem: ''
+    imagem: ''  // Adicione este campo para a URL da imagem
   });
+  const [success, setSuccess] = useState(''); // Estado para mensagem de sucesso
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -27,16 +28,13 @@ function AddTeam() {
     e.preventDefault();
     axios.post('/api/times', team)
       .then(() => {
-        setError(''); // Limpa a mensagem de erro se o cadastro for bem-sucedido
-        navigate('/');
+        setSuccess('Time cadastrado com sucesso!'); // Mensagem de sucesso
+        setError('');
+        setTimeout(() => navigate('/'), 2000); // Navega para a home após 2 segundos
       })
       .catch(error => {
-        if (error.response && error.response.data && error.response.data.erro) {
-          setError(error.response.data.erro);
-        } else {
-          setError('Erro ao cadastrar time. Por favor, tente novamente.');
-        }
-        console.error('Erro ao cadastrar time:', error);
+        setError('Erro ao cadastrar time. Por favor, tente novamente.');
+        setSuccess('');
       });
   };
 
@@ -53,7 +51,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Técnico"
             variant="outlined"
-            required
           />
           <TextField
             name="nome"
@@ -61,7 +58,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Nome do Time"
             variant="outlined"
-            required
           />
           <TextField
             name="estadio"
@@ -69,7 +65,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Estádio"
             variant="outlined"
-            required
           />
           <TextField
             name="pais"
@@ -77,7 +72,6 @@ function AddTeam() {
             onChange={handleChange}
             label="País"
             variant="outlined"
-            required
           />
           <TextField
             name="local"
@@ -85,7 +79,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Local"
             variant="outlined"
-            required
           />
           <TextField
             name="anoFundacao"
@@ -93,7 +86,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Ano de Fundação"
             variant="outlined"
-            required
           />
           <TextField
             name="torcida"
@@ -101,7 +93,6 @@ function AddTeam() {
             onChange={handleChange}
             label="Torcida"
             variant="outlined"
-            required
           />
           <TextField
             name="imagem"
@@ -110,11 +101,6 @@ function AddTeam() {
             label="Imagem URL"
             variant="outlined"
           />
-          {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
           <Button
             type="submit"
             variant="contained"
@@ -129,6 +115,8 @@ function AddTeam() {
           >
             Voltar para Home
           </Button>
+          {success && <Alert severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
+          {error && <Alert severity="error">{error}</Alert>} {/* Mensagem de erro */}
         </Box>
       </form>
     </Container>

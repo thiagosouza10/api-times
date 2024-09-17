@@ -1,11 +1,10 @@
 // src/components/EditTeam.js
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography, CircularProgress, Alert } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
 
 function EditTeam() {
-  const { id } = useParams();
   const [team, setTeam] = useState({
     tecnico: '',
     nome: '',
@@ -14,21 +13,20 @@ function EditTeam() {
     local: '',
     anoFundacao: '',
     torcida: '',
-    imagem: ''  // Campo para a URL da imagem
+    imagem: ''  // Adicione este campo para a URL da imagem
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(''); // Estado para mensagem de sucesso
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
     axios.get(`/api/times/${id}`)
       .then(response => {
         setTeam(response.data);
-        setLoading(false);
       })
-      .catch(error => {
-        setError('Erro ao carregar os dados do time. Por favor, tente novamente mais tarde.');
-        setLoading(false);
+      .catch(() => {
+        setError('Erro ao carregar os dados do time. Por favor, tente novamente.');
       });
   }, [id]);
 
@@ -41,15 +39,15 @@ function EditTeam() {
     e.preventDefault();
     axios.put(`/api/times/${id}`, team)
       .then(() => {
-        navigate('/');
+        setSuccess('Time atualizado com sucesso!'); // Mensagem de sucesso
+        setError('');
+        setTimeout(() => navigate('/'), 2000); // Navega para a home após 2 segundos
       })
       .catch(error => {
-        setError('Erro ao atualizar o time. Verifique se todos os campos obrigatórios estão preenchidos.');
+        setError('Erro ao atualizar time. Por favor, tente novamente.');
+        setSuccess('');
       });
   };
-
-  if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Container>
@@ -128,6 +126,8 @@ function EditTeam() {
           >
             Voltar para Home
           </Button>
+          {success && <Alert severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
+          {error && <Alert severity="error">{error}</Alert>} {/* Mensagem de erro */}
         </Box>
       </form>
     </Container>
