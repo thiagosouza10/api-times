@@ -80,7 +80,7 @@ function AddTeam() {
         setTimeout(() => navigate('/'), 2000); // Redireciona após 2 segundos
       })
       .catch(() => {
-        setError('Erro ao cadastrar time. Por favor, tente novamente.');
+        setError('Erro ao cadastrar time. Time já existe ');
         setSuccess('');
       });
   };
