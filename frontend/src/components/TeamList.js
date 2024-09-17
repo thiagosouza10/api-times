@@ -1,11 +1,10 @@
-// src/components/TeamList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert, TextField } from '@mui/material';
+import { Edit, Delete, Info } from '@mui/icons-material'; // Importando ícones
 
 function TeamList() {
-  // Estados para armazenar dados dos times, carregamento, erro, sucesso, e pesquisa
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +12,6 @@ function TeamList() {
   const [searchName, setSearchName] = useState('');
   const [filteredTeams, setFilteredTeams] = useState([]);
 
-  // Efeito para buscar a lista de times ao carregar o componente
   useEffect(() => {
     axios.get('/api/times')
       .then(response => {
@@ -27,7 +25,6 @@ function TeamList() {
       });
   }, []);
 
-  // Função para buscar times pelo nome
   const handleSearch = () => {
     if (searchName.trim()) {
       axios.get(`/api/times/nome/${searchName.trim()}`)
@@ -48,7 +45,6 @@ function TeamList() {
     }
   };
 
-  // Função para excluir um time
   const handleDelete = (id) => {
     axios.delete(`/api/times/${id}`)
       .then(() => {
@@ -63,43 +59,63 @@ function TeamList() {
       });
   };
 
-  // Exibe um indicador de carregamento enquanto os dados estão sendo buscados
   if (loading) return <CircularProgress />;
-  
+
   return (
-    <Container>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
-        Lista de Times
-      </Typography>
-      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/add"
+    <Container sx={{ position: 'relative' }}>
+      
+      <Box sx={{ mb: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', pt: '60px' }}>
+        <Typography
+          id="title"
+          variant="h4" // Tamanho do texto ajustado
+          component="h1"
+          align="center"
+          gutterBottom
+          sx={{
+            fontWeight: '600',
+            color: '#333', // Cor um pouco mais escura para contraste
+            textShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            fontFamily: '"Roboto", sans-serif',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            mb: 4 // Espaço abaixo do título
+          }}
         >
-          Adicionar Time
-        </Button>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            label="Buscar por Nome"
-            variant="outlined"
-            size="small"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            sx={{ maxWidth: 300 }}
-          />
+          Cadastro de Times
+        </Typography>
+        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button
+            id="add-team-button"
             variant="contained"
-            color="secondary"
-            onClick={handleSearch}
+            color="primary"
+            component={Link}
+            to="/add"
           >
-            Buscar Time
+            Adicionar Time
           </Button>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <TextField
+              id="search-field"
+              label="Buscar por Nome"
+              variant="outlined"
+              size="small"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              sx={{ maxWidth: 300 }}
+            />
+            <Button
+              id="search-button"
+              variant="contained"
+              color="secondary"
+              onClick={handleSearch}
+            >
+              Buscar
+            </Button>
+          </Box>
         </Box>
       </Box>
-      {success && <Alert severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
-      {error && <Alert severity="error">{error}</Alert>} {/* Mensagem de erro */}
+      {success && <Alert id="success-alert" severity="success">{success}</Alert>} {/* Mensagem de sucesso */}
+      {error && <Alert id="error-alert" severity="error">{error}</Alert>} {/* Mensagem de erro */}
       <List>
         {filteredTeams.map((team) => (
           <ListItem key={team._id} divider>
@@ -114,26 +130,29 @@ function TeamList() {
             />
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
+                id={`info-button-${team._id}`}
                 variant="outlined"
                 component={Link}
                 to={`/times/${team._id}`}
               >
-                Detalhes
+                <Info />
               </Button>
               <Button
+                id={`edit-button-${team._id}`}
                 variant="outlined"
                 color="secondary"
                 component={Link}
                 to={`/edit/${team._id}`}
               >
-                Editar
+                <Edit />
               </Button>
               <Button
+                id={`delete-button-${team._id}`}
                 variant="outlined"
                 color="error"
                 onClick={() => handleDelete(team._id)}
               >
-                Deletar
+                <Delete />
               </Button>
             </Box>
           </ListItem>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { Container, TextField, Button, Box, Typography, Alert, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // Estilo personalizado para o componente TextField
@@ -104,106 +104,142 @@ function AddTeam() {
 
   return (
     <Container>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
+      <Typography
+        variant="h4"
+        component="h1"
+        align="center"
+        gutterBottom
+        sx={{ marginBottom: 6 }} // Adiciona mais espaço abaixo do título
+      >
         Adicionar Time
       </Typography>
       <form onSubmit={handleSubmit}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <StyledTextField
-            name="tecnico"
-            value={team.tecnico}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Técnico"
-            variant="outlined"
-            error={getError('tecnico')}
-            helperText={getHelperText('tecnico')}
-          />
-          <StyledTextField
-            name="nome"
-            value={team.nome}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Nome do Time"
-            variant="outlined"
-            error={getError('nome')}
-            helperText={getHelperText('nome')}
-          />
-          <StyledTextField
-            name="estadio"
-            value={team.estadio}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Estádio"
-            variant="outlined"
-            error={getError('estadio')}
-            helperText={getHelperText('estadio')}
-          />
-          <StyledTextField
-            name="pais"
-            value={team.pais}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="País"
-            variant="outlined"
-            error={getError('pais')}
-            helperText={getHelperText('pais')}
-          />
-          <StyledTextField
-            name="local"
-            value={team.local}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Local"
-            variant="outlined"
-            error={getError('local')}
-            helperText={getHelperText('local')}
-          />
-          <StyledTextField
-            name="anoFundacao"
-            value={team.anoFundacao}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Ano de Fundação"
-            variant="outlined"
-            error={getError('anoFundacao')}
-            helperText={getHelperText('anoFundacao')}
-          />
-          <StyledTextField
-            name="torcida"
-            value={team.torcida}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Torcida"
-            variant="outlined"
-            error={getError('torcida')}
-            helperText={getHelperText('torcida')}
-          />
-          <StyledTextField
-            name="imagem"
-            value={team.imagem}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            label="Imagem URL"
-            variant="outlined"
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Adicionar Time
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => navigate('/')}
-          >
-            Voltar para Home
-          </Button>
-          {success && <Alert severity="success">{success}</Alert>}
-          {error && <Alert severity="error">{error}</Alert>}
-        </Box>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="tecnico"
+              value={team.tecnico}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Técnico"
+              variant="outlined"
+              error={getError('tecnico')}
+              helperText={getHelperText('tecnico')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="nome"
+              value={team.nome}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Nome do Time"
+              variant="outlined"
+              error={getError('nome')}
+              helperText={getHelperText('nome')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="estadio"
+              value={team.estadio}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Estádio"
+              variant="outlined"
+              error={getError('estadio')}
+              helperText={getHelperText('estadio')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="pais"
+              value={team.pais}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="País"
+              variant="outlined"
+              error={getError('pais')}
+              helperText={getHelperText('pais')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="local"
+              value={team.local}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Local"
+              variant="outlined"
+              error={getError('local')}
+              helperText={getHelperText('local')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="anoFundacao"
+              value={team.anoFundacao}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Ano de Fundação"
+              variant="outlined"
+              error={getError('anoFundacao')}
+              helperText={getHelperText('anoFundacao')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <StyledTextField
+              name="torcida"
+              value={team.torcida}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Torcida"
+              variant="outlined"
+              error={getError('torcida')}
+              helperText={getHelperText('torcida')}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <StyledTextField
+              name="imagem"
+              value={team.imagem}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              label="Imagem URL"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Adicionar Time
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => navigate('/')}
+                fullWidth
+              >
+                Voltar para Home
+              </Button>
+            </Box>
+          </Grid>
+          {success && <Grid item xs={12}><Alert severity="success">{success}</Alert></Grid>}
+          {error && <Grid item xs={12}><Alert severity="error">{error}</Alert></Grid>}
+        </Grid>
       </form>
     </Container>
   );

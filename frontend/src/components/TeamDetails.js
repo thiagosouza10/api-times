@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Button, Box, CircularProgress, Alert } from '@mui/material';
+import { Container, Typography, Button, Box, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 function TeamDetails() {
   // Obtém o ID do time a partir dos parâmetros da URL
@@ -36,37 +36,57 @@ function TeamDetails() {
 
   return (
     <Container>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
+      <Typography variant="h4" component="h1" align="center" gutterBottom id="team-name">
         {team.nome}
       </Typography>
       {team.imagem && (
         <Box sx={{ mb: 2, textAlign: 'center' }}>
-          <img src={team.imagem} alt={team.nome} style={{ maxWidth: '100%', height: 'auto' }} />
+          <img src={team.imagem} alt={team.nome} style={{ maxWidth: '100%', height: 'auto' }} id="team-image"/>
         </Box>
       )}
-      <Typography variant="h6" component="h2">
-        Técnico: {team.tecnico}
-      </Typography>
-      <Typography variant="body1">
-        Estádio: {team.estadio}
-      </Typography>
-      <Typography variant="body1">
-        País: {team.pais}
-      </Typography>
-      <Typography variant="body1">
-        Local: {team.local}
-      </Typography>
-      <Typography variant="body1">
-        Ano de Fundação: {team.anoFundacao}
-      </Typography>
-      <Typography variant="body1">
-        Torcida: {team.torcida}
-      </Typography>
-      <Box sx={{ mt: 2 }}>
+      <TableContainer component={Paper} sx={{ mt: 2, maxWidth: 600, margin: 'auto' }} id="team-details-table">
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell colSpan={2} align="center">
+                <Typography variant="h6" id="table-title">Detalhes do Time</Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell><strong id="label-tecnico">Técnico:</strong></TableCell>
+              <TableCell id="value-tecnico">{team.tecnico}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong id="label-estadio">Estádio:</strong></TableCell>
+              <TableCell id="value-estadio">{team.estadio}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong id="label-pais">País:</strong></TableCell>
+              <TableCell id="value-pais">{team.pais}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong id="label-local">Local:</strong></TableCell>
+              <TableCell id="value-local">{team.local}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong id="label-ano-fundacao">Ano de Fundação:</strong></TableCell>
+              <TableCell id="value-ano-fundacao">{team.anoFundacao}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong id="label-torcida">Torcida:</strong></TableCell>
+              <TableCell id="value-torcida">{team.torcida}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
         <Button
           variant="contained"
           color="primary"
           onClick={() => window.history.back()} // Volta para a página anterior
+          id="back-button"
         >
           Voltar
         </Button>
