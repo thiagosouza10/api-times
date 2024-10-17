@@ -1,1 +1,0 @@
-export const pathTimes = "/api/times"
